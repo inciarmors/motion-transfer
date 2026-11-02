@@ -4,12 +4,12 @@ export class AppError extends Error {
   constructor(message, status = 400) { super(message); this.status = status; }
 }
 export const models = [
-  { id: 'wan3', name: 'Wan 3.0 · Harness sperimentale', vendor: 'alibaba', maxImages: 10, maxDuration: 15, resolutions: ['480p', '720p', '1080p'], prompt: true, note: 'API Alibaba diretta. Confronta un prompt semplice con un harness esplicito. Equivalenza con Genjutsu da verificare.' },
-  { id: 'wan-move', name: 'Wan Animate · Move', vendor: 'fal', endpoint: 'fal-ai/wan/v2.2-14b/animate/move', maxImages: 1, resolutions: ['480p', '580p', '720p'], prompt: false, note: 'Anima un personaggio da un video di movimento. Modello a pesi aperti, inferenza su fal a pagamento.' },
-  { id: 'kling', name: 'Kling 2.6 · Motion Control', vendor: 'fal', endpoint: 'fal-ai/kling-video/v2.6/pro/motion-control', maxImages: 1, resolutions: [], prompt: true, note: 'Trasferisce la performance di un personaggio. Orientamento dal video, fino a 30 secondi. Risoluzione gestita dal provider.' },
-  { id: 'wan-replace', name: 'Wan Animate · Replace', vendor: 'fal', endpoint: 'fal-ai/wan/v2.2-14b/animate/replace', maxImages: 1, resolutions: ['480p', '580p', '720p'], prompt: false, note: 'Sostituisce un personaggio mantenendo l’ambiente originale. Supporta una singola immagine di riferimento.' },
-  { id: 'genjutsu', name: 'Genjutsu · Motion Transfer', vendor: 'higgsfield', endpoint: 'higgsfield/genjutsu/motion-transfer/v1.0', maxImages: 8, resolutions: ['480p', '720p', '1080p'], prompt: true, note: 'API ufficiale Higgsfield con crediti del tuo account. Usa il servizio originale, senza copiarne il modello.' },
-  { id: 'custom', name: 'Il tuo endpoint', vendor: 'custom', maxImages: 30, resolutions: ['480p', '720p', '1080p'], prompt: true, note: 'Collega un servizio tuo usando il contratto API documentato.' }
+  { id: 'wan3', name: 'Wan 3.0 · Experimental harness', vendor: 'alibaba', maxImages: 10, maxDuration: 15, resolutions: ['480p', '720p', '1080p'], prompt: true, note: 'Direct Alibaba API. Compare raw prompting with an explicit harness. Genjutsu equivalence remains unverified.' },
+  { id: 'wan-move', name: 'Wan Animate · Move', vendor: 'fal', endpoint: 'fal-ai/wan/v2.2-14b/animate/move', maxImages: 1, resolutions: ['480p', '580p', '720p'], prompt: false, note: 'Animate a character from a motion video. Open-weight model with paid inference on fal.' },
+  { id: 'kling', name: 'Kling 2.6 · Motion Control', vendor: 'fal', endpoint: 'fal-ai/kling-video/v2.6/pro/motion-control', maxImages: 1, resolutions: [], prompt: true, note: 'Transfer a character performance. Video orientation, up to 30 seconds. Resolution is managed by the provider.' },
+  { id: 'wan-replace', name: 'Wan Animate · Replace', vendor: 'fal', endpoint: 'fal-ai/wan/v2.2-14b/animate/replace', maxImages: 1, resolutions: ['480p', '580p', '720p'], prompt: false, note: 'Replace a character while retaining the source environment. Supports one reference image.' },
+  { id: 'genjutsu', name: 'Genjutsu · Motion Transfer', vendor: 'higgsfield', endpoint: 'higgsfield/genjutsu/motion-transfer/v1.0', maxImages: 8, resolutions: ['480p', '720p', '1080p'], prompt: true, note: 'Official Higgsfield API using your account credits. Uses the original service without copying its model.' },
+  { id: 'custom', name: 'Your own endpoint', vendor: 'custom', maxImages: 30, resolutions: ['480p', '720p', '1080p'], prompt: true, note: 'Connect your own service using the documented API contract.' }
 ];
 export function publicMediaUrl(value) {
   if (typeof value !== 'string' || value.length > 2083) throw new AppError('Enter a valid public HTTPS media URL.');

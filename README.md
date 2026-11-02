@@ -1,73 +1,75 @@
 # Motion Transfer Studio
 
-Uno studio locale, gratuito e indipendente per sperimentare motion transfer con API proprie. Include un'analisi del frontend pubblico di Genjutsu e un harness Wan 3.0 trasparente da confrontare con il servizio originale.
+A free, independent local workspace for motion transfer with your own API keys. Includes an analysis of the public Genjutsu frontend and a transparent Wan 3.0 harness for comparison with the original service.
 
-**Non è una replica del modello Genjutsu. Non è stato dimostrato che Genjutsu usi Wan 3.0.** Leggi [evidenze e limiti](docs/research.md) prima di interpretare i risultati.
+The interface takes its cues from early-2000s desktop utilities: heavy beveled window frames, inset controls, monospace readouts, and Matrix-green monitors. The `.exe` titles are visual styling; this is a Node.js web application, not a Windows executable. The interface, messages, and documentation are in English.
 
-## Avvio
+**This is not a replica of the Genjutsu model. There is no proof that Genjutsu uses Wan 3.0.** Read the [evidence and limitations](docs/research.md) before interpreting results.
 
-Node.js 22.15+ (consigliato Node 24), npm.
+## Quick start
+
+Requires Node.js 22.15+ (Node 24 recommended) and npm.
 
 ```sh
 npm ci
 cp .env.example .env
-# Inserisci nel file .env soltanto le chiavi dei provider che vuoi usare.
+# Add only the keys for the providers you want to use to .env.
 npm start
 ```
 
-Apri **http://127.0.0.1:3210**. L'interfaccia e l'anteprima del payload funzionano anche senza chiavi; la generazione si abilita quando è configurato il relativo provider. Configurato significa chiave presente, non account/bilancio verificati.
+Open **http://127.0.0.1:3210**. The interface and request inspector work without API keys. Generation becomes available when the selected provider is configured. Configured means a key is present; it does not confirm account access or credit balance.
 
-## Motori
+## Engines
 
-| Motore | Configurazione | Funzione |
+| Engine | Configuration | Purpose |
 | --- | --- | --- |
-| Wan 3.0 diretto | `DASHSCOPE_API_KEY`, `ALIBABA_API_BASE` | Baseline raw o harness originale; riferimenti video ≤15s. |
-| Genjutsu ufficiale | `HF_CREDENTIALS=ID:SECRET` | API pubblica Higgsfield, 1–8 immagini. |
-| Kling 2.6 Pro | `FAL_KEY` | Motion control con una immagine. |
-| Wan Animate Move / Replace | `FAL_KEY` | Animazione o sostituzione di un personaggio. |
-| API propria | `CUSTOM_API_URL`, eventuale `CUSTOM_API_KEY` | [Contratto del servizio](docs/custom-provider.md). |
+| Wan 3.0 direct | `DASHSCOPE_API_KEY`, `ALIBABA_API_BASE` | Raw baseline or original harness; reference video up to 15s. |
+| Official Genjutsu | `HF_CREDENTIALS=ID:SECRET` | Public Higgsfield API, 1–8 reference images. |
+| Kling 2.6 Pro | `FAL_KEY` | Motion control with one reference image. |
+| Wan Animate Move / Replace | `FAL_KEY` | Character animation or replacement. |
+| Your own API | `CUSTOM_API_URL`, optional `CUSTOM_API_KEY` | [Service contract](docs/custom-provider.md). |
 
-Per Alibaba, `ALIBABA_API_BASE` è l'origine HTTPS del tuo workspace, ad esempio `https://WORKSPACE.eu-central-1.maas.aliyuncs.com`. Usa regione, chiave e modello compatibili come indicato nella [documentazione ufficiale](https://help.aliyun.com/en/model-studio/wan3-video-generation-api-reference). Non usare il dominio generico di un altro provider.
+For Alibaba, `ALIBABA_API_BASE` is your workspace HTTPS origin, such as `https://WORKSPACE.eu-central-1.maas.aliyuncs.com`. Use a compatible region, key, and model as described in the [official documentation](https://help.aliyun.com/en/model-studio/wan3-video-generation-api-reference). Do not use a generic domain belonging to a different provider.
 
-Le integrazioni cloud sono a pagamento secondo il proprio account. Il software non impone un abbonamento. Non contiene pesi né un motore di inferenza locale.
+Cloud inference is billed to your provider account. The software itself requires no subscription. No model weights or local inference engine are included.
 
-## Uso
+## Workflow
 
-1. Scegli il motore e inserisci URL HTTPS scaricabili di un video e dei riferimenti. Per i motori fal puoi caricare direttamente MP4, PNG, JPEG o WebP: i file vengono trasferiti a fal. Per altri motori usa il tuo storage.
-2. Imposta la durata reale della sorgente e la risoluzione. L'app prova a leggere la durata nel browser; il provider deve comunque validare i media remoti.
-3. Con Wan 3.0, confronta `Baseline` e un harness. **Ispeziona la richiesta** mostra il prompt effettivo prima dell'invio.
-4. Genera e segui la richiesta nello storico. Seleziona una sessione per vedere sorgente e risultato. Salva gli output prima che gli URL del provider scadano.
+1. Choose an engine and enter downloadable HTTPS URLs for your video and image references. For fal engines, you can upload MP4, PNG, JPEG, or WebP files directly; these files are transferred to fal. For other engines, use your own storage.
+2. Set the actual source duration and output resolution. The app attempts to read video duration in the browser; the provider must still validate remote media.
+3. With Wan 3.0, compare the `Baseline` recipe with a harness. **Inspect request** shows the actual prompt before submission.
+4. Generate and track the request in the session log. Select a session to view its source and output. Save generated files before provider URLs expire.
 
-Il browser aggiorna i job attivi quando la pagina è aperta. Chiuderla non annulla il lavoro sul provider. Lo storico e gli ID persistono in `.data/jobs.json`; riaprendo l'app il polling riprende. Nessun reinvio automatico di generazioni. Un invio dall'esito ambiguo viene marcato `submission_unknown`: controlla il dashboard del provider prima di creare un nuovo job. Non eseguire due processi sulla stessa `.data/`.
+The browser polls active jobs while the page is open. Closing it does not cancel work at the provider. History and request IDs persist in `.data/jobs.json`; polling resumes when you reopen the app. Generations are never automatically resubmitted. An ambiguous submission is marked `submission_unknown`: check the provider dashboard before creating another job. Do not run two server processes against the same `.data/` directory.
 
-## Privacy e repository pubblica
+## Privacy and public source
 
-- Credenziali solo nel server tramite `.env`; nessuna chiave nel bundle browser.
-- Server vincolato a loopback, controllo Host/Origin e nessun CORS pubblico. È un'app personale locale, non un servizio multiutente da esporre su Internet.
-- `.env`, storico, media, log, HAR e catture sono esclusi da Git. Lo storico contiene prompt e URL potenzialmente privati: non condividerlo.
-- Nessun bundle proprietario, cookie, token di sessione o media Higgsfield è incluso.
-- Le anteprime caricano i media nel browser, gli upload fal usano storage esterno. URL firmati possono dare accesso ai file a chi li possiede.
-- `npm run check:public` controlla **il contenuto nell'indice Git**, non soltanto i file nel working tree. È un controllo euristico, da accompagnare a revisione del diff.
+- Credentials stay on the server in `.env`; no keys are included in browser code.
+- The server binds to loopback, checks Host/Origin, and enables no public CORS access. This is a personal local app, not a multiuser service for public Internet deployment.
+- `.env`, history, media, logs, HAR files, and captures are excluded from Git. History contains potentially private prompts and URLs; do not share it.
+- No proprietary bundles, cookies, session tokens, or Higgsfield media are included.
+- Previews load media in your browser. fal uploads use external storage. Anyone holding a signed media URL may be able to access the file.
+- `npm run check:public` scans **the Git index**, not just working-tree files. It is a heuristic check and should accompany a review of the diff.
 
-## Verifica
+## Verification
 
 ```sh
 npm run check
 npm run check:public
 ```
 
-Test automatici: validazione, mapping dei provider, ciclo di vita simulato, deduplicazione, recupero dopo interruzione e confini HTTP. **Non sono state effettuate generazioni live né misurazioni di equivalenza visiva.** [Protocollo del benchmark](docs/benchmark.md).
+Automated tests cover validation, provider mappings, simulated job lifecycles, deduplication, interruption recovery, and HTTP boundaries. **No live generations or visual-equivalence measurements have been performed.** See the [benchmark protocol](docs/benchmark.md).
 
-## Struttura
+## Project layout
 
-- `src/domain.js`: capacità, validazione e template di prompt originali.
-- `src/providers.js`: adapter HTTP e upload tramite client ufficiale fal.
-- `src/server.js`, `src/store.js`: API locale e storico persistente.
-- `public/`: interfaccia senza framework o build.
-- `docs/research.md`: evidenze riproducibili, hash e offset dei bundle pubblici osservati.
+- `src/domain.js`: capabilities, validation, and original prompt templates.
+- `src/providers.js`: HTTP adapters and uploads through the official fal client.
+- `src/server.js`, `src/store.js`: local API and persistent job history.
+- `public/`: desktop-inspired interface with no frontend framework or build step.
+- `docs/research.md`: reproducible evidence, hashes, and offsets in the observed public bundles.
 
-## Fonti dei contratti
+## API contract sources
 
-[Genjutsu API](https://open.higgsfield.ai/models/higgsfield/genjutsu/motion-transfer/v1.0/api-reference) · [Wan 3.0 API](https://help.aliyun.com/en/model-studio/wan3-video-generation-api-reference) · [Kling su fal](https://fal.ai/models/fal-ai/kling-video/v2.6/pro/motion-control/api) · [Wan Move](https://fal.ai/models/fal-ai/wan/v2.2-14b/animate/move/api) · [Wan Replace](https://fal.ai/models/fal-ai/wan/v2.2-14b/animate/replace/api) · [fal Queue](https://fal.ai/docs/documentation/model-apis/inference/queue).
+[Genjutsu API](https://open.higgsfield.ai/models/higgsfield/genjutsu/motion-transfer/v1.0/api-reference) · [Wan 3.0 API](https://help.aliyun.com/en/model-studio/wan3-video-generation-api-reference) · [Kling on fal](https://fal.ai/models/fal-ai/kling-video/v2.6/pro/motion-control/api) · [Wan Move](https://fal.ai/models/fal-ai/wan/v2.2-14b/animate/move/api) · [Wan Replace](https://fal.ai/models/fal-ai/wan/v2.2-14b/animate/replace/api) · [fal Queue](https://fal.ai/docs/documentation/model-apis/inference/queue).
 
-MIT per il codice originale. Modelli, API e marchi mantengono i rispettivi termini. Progetto non affiliato a Higgsfield, Alibaba, Kling o fal.
+Original code is licensed under MIT. Models, APIs, and trademarks retain their respective terms. This project is not affiliated with Higgsfield, Alibaba, Kling, or fal.

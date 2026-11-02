@@ -1,39 +1,39 @@
-# Confrontare l'ipotesi Wan 3.0
+# Testing the Wan 3.0 hypothesis
 
-Stato: protocollo predisposto; **nessun risultato generativo misurato**.
+Status: protocol prepared; **no generation results have been measured**.
 
-Usare clip e immagini proprie, con permesso di condividerle con ciascun provider. Non aggiungere i media, URL firmati, prompt privati o output al repository pubblico.
+Use your own clips and images with permission to share them with each provider. Do not commit media, signed URLs, private prompts, or outputs to the public repository.
 
-## Set minimo
+## Minimum test set
 
-Tre clip da 6–10 secondi: una persona a camera fissa; una persona con rotazione della camera e occlusione; due persone che interagiscono. Una quarta clip da 20–30 secondi può esplorare Genjutsu, ma è fuori dai limiti del nostro adapter Wan 3.0 e non è un confronto diretto.
+Use three 6–10-second clips: one person with a fixed camera; one person with camera rotation and occlusion; and two people interacting. A fourth 20–30-second clip can explore Genjutsu, but is outside our Wan 3.0 adapter's limits and is not a direct comparison.
 
-Per ogni clip tenere identici risoluzione, istruzioni creative, personaggio di riferimento e fonte. Usare 3 repliche per condizione: 27 generazioni per 3 clip × 3 condizioni × 3 repliche. Concordare il budget prima di eseguirle; non sono lanciate automaticamente.
+For each clip, keep resolution, creative direction, reference character, and source identical. Use three replicates per condition: 27 generations across 3 clips × 3 conditions × 3 replicates. Agree on a budget before running them; they do not start automatically.
 
-## Condizioni
+## Conditions
 
-1. Genjutsu API ufficiale, prompt creativo breve.
-2. Wan 3.0 diretto, recipe `raw`, stesso intento espresso con `Video 1` e `Image 1`.
-3. Wan 3.0 diretto, recipe `motion-transfer` o `character-replace`, stesso intento aggiuntivo.
+1. Official Genjutsu API with a short creative prompt.
+2. Direct Wan 3.0 with the `raw` recipe and the same intent expressed using `Video 1` and `Image 1`.
+3. Direct Wan 3.0 with the `motion-transfer` or `character-replace` recipe and the same additional direction.
 
-Salvare il payload mostrato da **Ispeziona la richiesta** in una cartella locale esclusa da Git. Non aggiungere un passaggio di descrizione visiva, upscaling o face swap finché non è stata misurata la baseline: cambiare più fattori insieme impedisce di attribuire i miglioramenti.
+Save the payload shown by **Inspect request** in a local directory excluded from Git. Do not add visual description, upscaling, or face-swap stages until the baseline has been measured: changing several factors at once prevents attributing improvements to a specific cause.
 
-## Valutazione
+## Evaluation
 
-Assegnare nomi casuali A/B/C alle uscite prima della valutazione. Separare le seguenti misure:
+Assign random A/B/C labels to outputs before evaluation. Measure these dimensions separately:
 
-- Timing: errore in frame per eventi riconoscibili (contatto, passo, rotazione, gesto), corretto per FPS.
-- Movimento: confronto delle traiettorie e delle pose, includendo fallimenti del rilevatore.
-- Camera: direzione e velocità apparente dello sfondo; non confonderle con il movimento del soggetto.
-- Identità: continuità del personaggio e degli abiti, specie dopo occlusioni.
-- Interazioni: contatto tra mani, oggetti e altri soggetti; assegnazione corretta dei ruoli.
-- Preservazione: per replacement, cambiamenti indesiderati allo sfondo e agli altri soggetti.
-- Durata, audio, tagli, flicker, tempo di completamento e costo effettivo.
+- Timing: frame error for recognizable events such as contact, steps, rotation, or gestures, adjusted for FPS.
+- Motion: compare trajectories and poses, including detector failures.
+- Camera: apparent direction and speed of the background; distinguish these from subject movement.
+- Identity: character and wardrobe continuity, especially after occlusion.
+- Interactions: contact between hands, objects, and other subjects; correct role assignment.
+- Preservation: unwanted changes to the background and other subjects in replacement tasks.
+- Duration, audio, cuts, flicker, completion time, and actual cost.
 
-Non usare SSIM/PSNR come unica metrica: un recasting corretto cambia intenzionalmente molti pixel. Riportare mediana, dispersione e singoli fallimenti; non selezionare soltanto l'output migliore. I risultati possono sostenere un'approssimazione pratica, non identificare univocamente la pipeline di Higgsfield.
+Do not use SSIM/PSNR as the only metric: successful recasting intentionally changes many pixels. Report medians, variation, and individual failures; do not select only the best output. Results may support a practical approximation, but cannot uniquely identify Higgsfield's pipeline.
 
-## Registro locale suggerito
+## Suggested local record
 
-Campi: ID prova, hash dei file input, provider, recipe, hash/versione del prompt, risoluzione, durata, request ID, orario, costo, percorso output, timing error, camera score, identity score, interaction score, note. Conservare questo registro nella cartella `.data/` esclusa da Git.
+Fields: experiment ID, input file hashes, provider, recipe, prompt hash/version, resolution, duration, request ID, timestamp, cost, output path, timing error, camera score, identity score, interaction score, and notes. Keep this record in the Git-excluded `.data/` directory.
 
-Per arrivare a una qualità migliore, modificare una sola componente alla volta e ripetere il set: prompt, preparazione dell'immagine, ruolo dei riferimenti, modello. Il progetto non chiama questi template “Genjutsu recovered”: sono implementazioni originali da verificare.
+To improve quality, change one component at a time and repeat the set: prompt, image preparation, reference roles, or model. This project does not label its templates “Genjutsu recovered”: they are original implementations requiring evaluation.

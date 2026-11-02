@@ -1,37 +1,79 @@
 <!doctype html>
-<html lang="it">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Uno studio indipendente per trasferire movimento con le tue API."><title>Motion Transfer — Studio</title><link rel="stylesheet" href="/style.css"><script src="/app.js" type="module"></script></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="An independent motion transfer workspace. Your footage, your references, your API keys.">
+  <title>motion_transfer.exe — Local workspace</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" type="module"></script>
+</head>
 <body>
-<header><a class="brand" href="/" aria-label="Motion Transfer home"><span class="mark">m<span>↗</span></span><strong>MOTION<span>TRANSFER</span></strong></a><div class="header-right"><span class="local"><i></i> WORKSPACE LOCALE</span><button id="setup-button" class="secondary">Configura API <span>↗</span></button></div></header>
-<main>
-<aside><div class="eyebrow">01 / CREA</div><h1>Stesso movimento.<br><em>Un’altra storia.</em></h1><p class="intro">Il tuo video, i tuoi riferimenti, le tue API.</p>
-<form id="generation-form">
-<label for="model">Motore <span id="connection" class="badge">…</span></label><select id="model" name="model"></select><p id="model-note" class="hint"></p>
-<div class="field-title"><label for="video-url">Video di movimento</label><span id="duration-limit">4–30 s</span></div>
-<div class="url-row"><input id="video-url" type="url" placeholder="https://…/movimento.mp4" required aria-label="URL video di movimento"><label class="upload" title="Carica un video su fal"><span>↑</span><input id="video-file" type="file" accept="video/mp4" aria-label="Carica video su fal"></label></div>
-<div class="field-title"><label for="image-urls">Riferimenti immagine</label><span id="image-limit">1 immagine</span></div>
-<div class="url-row"><textarea id="image-urls" rows="2" placeholder="https://…/personaggio.png&#10;Un URL per riga" required></textarea><label class="upload" title="Carica immagini su fal"><span>↑</span><input id="image-files" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-label="Carica immagini su fal"></label></div>
-<p id="upload-note" class="hint">Gli upload vengono inviati a fal. In alternativa usa URL HTTPS tuoi.</p>
-<div class="two-fields"><div><label for="resolution">Risoluzione</label><select id="resolution"></select></div><div><label for="duration">Durata sorgente <span class="muted">(s)</span></label><input id="duration" type="number" min="4" max="30" step="0.01" placeholder="Es. 8"></div></div>
-<div id="recipe-field" hidden><label for="recipe">Harness sperimentale</label><select id="recipe"><option value="raw">Baseline · solo il mio prompt</option><option value="motion-transfer">Trasferisci movimento</option><option value="character-replace">Sostituisci personaggio</option></select><p class="hint">Template originale e ispezionabile. Non è il prompt recuperato da Genjutsu.</p></div>
-<label for="prompt">Direzione creativa <span class="muted">facoltativa</span></label><textarea id="prompt" rows="3" maxlength="10000" placeholder="Descrivi cosa cambiare e cosa mantenere…"></textarea>
-<button id="preview-button" type="button" class="text-button">Ispeziona la richiesta <span>↗</span></button>
-<div class="submit-area"><p class="billing">Software gratuito. Generare usa il saldo del provider selezionato.</p><button id="generate" class="primary" type="submit">Genera video <span>↗</span></button></div>
-</form></aside>
-<section class="workspace">
-<div class="workspace-heading"><div><div class="eyebrow">02 / ESPLORA</div><h2>Il tuo motion lab</h2></div><span class="edition">OPEN STUDIO / 001</span></div>
-<div id="notice" role="status" aria-live="polite" hidden></div>
-<div class="preview-grid">
-<article class="preview-panel"><div class="panel-top"><span><i class="dot"></i> SORGENTE</span><span id="source-meta">Movimento & camera</span></div><div class="media-stage"><video id="source-video" controls playsinline preload="metadata" hidden></video><div id="source-empty" class="empty-visual"><div class="motion-symbol"><span></span><span></span><span></span></div><h3>Inizia da un movimento</h3><p>Una performance. Una camera.<br>Il punto di partenza della tua nuova scena.</p></div></div></article>
-<article class="preview-panel result-panel"><div class="panel-top"><span><i class="dot green"></i> RISULTATO</span><span id="result-status">In attesa di una storia</span></div><div class="media-stage"><video id="result-video" controls playsinline preload="metadata" hidden></video><div id="result-empty" class="empty-visual"><div class="target-symbol">↗</div><h3>Una nuova interpretazione</h3><p>Scegli i riferimenti e il motore.<br>Il risultato apparirà qui.</p></div></div><a id="result-link" class="result-link" target="_blank" rel="noopener noreferrer" hidden>Apri il video originale ↗</a></article>
+<div class="desktop-caption" aria-hidden="true"><span>MT SYSTEMS // PERSONAL VIDEO WORKSTATION</span><span>EST. 2026 / BUILT DIFFERENT</span></div>
+<div class="application-window">
+  <header class="titlebar">
+    <a class="brand" href="/" aria-label="Motion Transfer home"><span class="app-icon" aria-hidden="true">M</span><strong>motion_transfer.exe</strong><span class="title-detail"> — Local workspace</span></a>
+    <span class="window-label">v0.1.0</span>
+  </header>
+  <nav class="menubar" aria-label="Application menu">
+    <a href="#generation-form"><span class="menu-shortcut">W</span>orkspace</a>
+    <button id="setup-button" type="button"><span class="menu-shortcut">A</span>PI settings</button>
+    <a href="https://github.com/inciarmors/motion-transfer/blob/main/docs/research.md" target="_blank" rel="noopener noreferrer"><span class="menu-shortcut">R</span>esearch ↗</a>
+    <a href="https://github.com/inciarmors/motion-transfer" target="_blank" rel="noopener noreferrer"><span class="menu-shortcut">S</span>ource ↗</a>
+    <span class="local"><i></i> LOCAL WORKSPACE</span>
+  </nav>
+  <div class="system-banner"><div><span class="banner-kicker">[ MOTION TRANSFER UTILITY ]</span><h1>Same motion. <span>New reality.</span></h1></div><div class="banner-code" aria-hidden="true">VIDEO → REFERENCE → RENDER<br>YOUR FOOTAGE. YOUR API.</div></div>
+  <main>
+    <aside>
+      <div class="section-title"><span class="section-icon" aria-hidden="true">▤</span> Generation properties</div>
+      <form id="generation-form">
+        <fieldset><legend>01 / Engine</legend>
+          <label for="model">Provider / model <span id="connection" class="badge">LOADING</span></label>
+          <select id="model" name="model"></select><p id="model-note" class="hint"></p>
+        </fieldset>
+        <fieldset><legend>02 / Input files</legend>
+          <div class="field-title"><label for="video-url">Motion video</label><span id="duration-limit">4–30 s</span></div>
+          <div class="url-row"><input id="video-url" type="url" placeholder="https://…/motion.mp4" required aria-label="Motion video URL"><label class="upload" title="Upload a video to fal"><span>↑</span><input id="video-file" type="file" accept="video/mp4" aria-label="Upload video to fal"></label></div>
+          <div class="field-title"><label for="image-urls">Image references</label><span id="image-limit">1 image</span></div>
+          <div class="url-row"><textarea id="image-urls" rows="2" placeholder="https://…/character.png&#10;One URL per line" required></textarea><label class="upload" title="Upload images to fal"><span>↑</span><input id="image-files" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-label="Upload images to fal"></label></div>
+          <p id="upload-note" class="hint">Uploads are sent to fal. You can also use your own HTTPS URLs.</p>
+          <div class="two-fields"><div><label for="resolution">Resolution</label><select id="resolution"></select></div><div><label for="duration">Source length <span class="muted">(sec)</span></label><input id="duration" type="number" min="4" max="30" step="0.01" placeholder="e.g. 8"></div></div>
+        </fieldset>
+        <fieldset><legend>03 / Instructions</legend>
+          <div id="recipe-field" hidden><label for="recipe">Experimental harness</label><select id="recipe"><option value="raw">Baseline / my prompt only</option><option value="motion-transfer">Transfer motion</option><option value="character-replace">Replace character</option></select><p class="hint">An original, inspectable template. Not a recovered Genjutsu prompt.</p></div>
+          <label for="prompt">Creative direction <span id="prompt-optional" class="muted">optional</span></label><textarea id="prompt" rows="3" maxlength="10000" placeholder="Describe what to change and what to preserve…"></textarea>
+          <button id="preview-button" type="button" class="secondary">[ Inspect request ]</button>
+        </fieldset>
+        <div class="submit-area"><button id="generate" class="primary" type="submit"><span aria-hidden="true">▶</span> GENERATE VIDEO</button><p class="billing">Free software. Generation uses your selected provider’s balance.</p></div>
+      </form>
+    </aside>
+    <section class="workspace" aria-labelledby="monitor-heading">
+      <div class="workspace-heading"><h2 id="monitor-heading"><span class="section-icon" aria-hidden="true">▣</span> Transfer monitor</h2><span class="edition">INPUT / OUTPUT</span></div>
+      <div id="notice" role="status" aria-live="polite" hidden></div>
+      <div class="preview-grid">
+        <article class="preview-panel"><div class="panel-top"><span><i class="dot"></i> SOURCE_01</span><span id="source-meta">Motion + camera</span></div><div class="media-stage"><video id="source-video" controls playsinline preload="metadata" hidden></video><div id="source-empty" class="empty-visual">
+          <span class="monitor-caption">[ NO INPUT SIGNAL ]</span>
+          <svg class="wireframe motion-figure" viewBox="0 0 180 180" fill="none" aria-hidden="true"><path class="dim-line" d="M20 145h140M30 130h120M40 115h100M50 100h80M90 90 25 160M90 90 65 160M90 90 115 160M90 90 155 160"/><path d="m86 42-9 24 15 24-6 25-20 36m20-36 28 9 16 27M77 66l-24 13-20-21m44 8 30 1 24-21M77 66l21-7 9 8-15 23"/><circle cx="90" cy="28" r="14"/><path d="m78 23 24 10m-19-17 12 25"/><g class="joint"><rect x="74" y="63" width="6" height="6"/><rect x="89" y="87" width="6" height="6"/><rect x="83" y="112" width="6" height="6"/><rect x="111" y="121" width="6" height="6"/></g></svg>
+          <h3>Load your motion.</h3><p>One performance. One camera.<br>The starting point for a different reality.</p><span class="monitor-corner" aria-hidden="true">[ SRC : STANDBY ]</span>
+        </div></div></article>
+        <article class="preview-panel result-panel"><div class="panel-top"><span><i class="dot green"></i> OUTPUT_01</span><span id="result-status">Awaiting generation</span></div><div class="media-stage"><video id="result-video" controls playsinline preload="metadata" hidden></video><div id="result-empty" class="empty-visual">
+          <span class="monitor-caption">[ AWAITING RENDER ]</span>
+          <svg class="wireframe output-cube" viewBox="0 0 180 180" fill="none" aria-hidden="true"><path class="dim-line" d="M90 10v20m0 120v20M10 90h20m120 0h20M20 20h20M20 20v20m140-20h-20m20 0v20M20 160h20m-20 0v-20m140 20h-20m20 0v-20"/><path d="m90 37 47 27v53l-47 27-47-27V64Zm0 54 47-27M90 91 43 64m47 27v53"/><path class="dim-line" d="m90 37 0 54m-47 26 47-26 47 26M66 51l48 27v53m-48 0V78l48-27M43 90l47 27 47-27"/><rect x="86" y="87" width="8" height="8" class="joint"/></svg>
+          <h3>Rewrite the scene.</h3><p>Choose a reference. Connect an engine.<br>Your generated video will appear here.</p><span class="monitor-corner" aria-hidden="true">[ OUT : STANDBY ]</span>
+        </div></div><a id="result-link" class="result-link" target="_blank" rel="noopener noreferrer" hidden>Open original video ↗</a></article>
+      </div>
+      <div class="references-strip" id="references-strip" aria-label="Reference previews"></div>
+      <div class="lab-note"><span class="info-icon" aria-hidden="true">i</span><p><strong>Research build.</strong> Wan 3.0 is a hypothesis to test. Equivalence with Genjutsu’s private server pipeline has not been established.</p><a href="https://github.com/inciarmors/motion-transfer/blob/main/docs/research.md" target="_blank" rel="noopener noreferrer">Read findings ↗</a></div>
+      <section class="history-window" aria-labelledby="history-heading"><div class="history-heading"><h2 id="history-heading">Session log <span id="job-count">00</span></h2><button id="refresh" class="secondary">Refresh ↻</button></div>
+        <div class="log-columns" aria-hidden="true"><span>MODEL / REQUEST</span><span>STATUS</span></div>
+        <div id="jobs" class="jobs"><div class="history-empty"><span aria-hidden="true">&gt;_</span><div><strong>No sessions recorded.</strong><p>Requests are saved locally and survive a restart.</p></div></div></div>
+      </section>
+      <footer><span>YOUR MEDIA. YOUR MODELS. YOUR RULES.</span><span>NO AUTOMATIC GENERATIONS</span></footer>
+    </section>
+  </main>
+  <div class="statusbar"><span><i class="dot green"></i> LOCAL MODE</span><span>Bring your own API key</span><span>Motion Transfer Studio</span><span class="resize-grip" aria-hidden="true">◢</span></div>
 </div>
-<div class="references-strip" id="references-strip" aria-label="Anteprime dei riferimenti"></div>
-<div class="lab-note"><span>↳</span><p><strong>Un esperimento trasparente.</strong> Wan 3.0 è un’ipotesi da confrontare. Genjutsu usa una pipeline server non pubblica: nessuna equivalenza è stata dimostrata.</p><a href="https://github.com/inciarmors/motion-transfer/blob/main/docs/research.md" target="_blank" rel="noopener noreferrer">Leggi l’analisi ↗</a></div>
-<div class="history-heading"><h2>Sessioni <span id="job-count">00</span></h2><button id="refresh" class="text-button">Aggiorna ↻</button></div>
-<div id="jobs" class="jobs"><div class="history-empty"><span>↗</span><div><strong>Il prossimo esperimento è tuo.</strong><p>Le richieste restano nello storico locale, anche dopo un riavvio.</p></div></div></div>
-<footer><span>BRING YOUR OWN API.</span><span>Creato per sperimentare, con controllo.</span></footer>
-</section>
-</main>
-<dialog id="setup-dialog"><button class="close" aria-label="Chiudi">×</button><div class="eyebrow">IL TUO WORKSPACE</div><h2>Collega un motore.</h2><p>Copia <code>.env.example</code> in <code>.env</code>, inserisci le chiavi sul tuo computer e riavvia con <code>npm start</code>.</p><dl><dt>Wan 3.0 diretto</dt><dd><code>DASHSCOPE_API_KEY</code> e <code>ALIBABA_API_BASE</code> del tuo workspace regionale.</dd><dt>Kling / Wan Animate</dt><dd><code>FAL_KEY</code>. Abilita anche gli upload a fal.</dd><dt>Genjutsu ufficiale</dt><dd><code>HF_CREDENTIALS</code> nel formato ID:SECRET. Riferimenti tramite URL HTTPS.</dd><dt>Il tuo servizio</dt><dd><code>CUSTOM_API_URL</code> e, se necessario, <code>CUSTOM_API_KEY</code>.</dd></dl><p class="hint">Le chiavi restano nel server locale. Non inserirle negli URL dei riferimenti. Nessuna generazione di prova viene avviata automaticamente.</p></dialog>
-<dialog id="payload-dialog"><button class="close" aria-label="Chiudi">×</button><div class="eyebrow">RICHIESTA EFFETTIVA</div><h2>Nessuna scatola nera nel client.</h2><p>Questo è il corpo della richiesta al provider. Non include credenziali e non è ancora stato inviato.</p><pre id="payload"></pre></dialog>
-</body></html>
+<dialog id="setup-dialog" aria-labelledby="setup-title"><div class="dialog-titlebar"><span>api_settings.exe</span><button class="close" aria-label="Close">×</button></div><div class="dialog-body"><div class="eyebrow">CONNECTION SETTINGS</div><h2 id="setup-title">Connect an engine.</h2><p>Copy <code>.env.example</code> to <code>.env</code>, add your keys on your computer, then restart with <code>npm start</code>.</p><dl><dt>Wan 3.0 direct</dt><dd><code>DASHSCOPE_API_KEY</code> and your regional workspace’s <code>ALIBABA_API_BASE</code>.</dd><dt>Kling / Wan Animate</dt><dd><code>FAL_KEY</code>. Also enables uploads to fal.</dd><dt>Official Genjutsu</dt><dd><code>HF_CREDENTIALS</code> in ID:SECRET format. Provide references through HTTPS URLs.</dd><dt>Your own service</dt><dd><code>CUSTOM_API_URL</code> and, if needed, <code>CUSTOM_API_KEY</code>.</dd></dl><p class="hint">Keys stay on the local server. Do not put them in reference URLs. No test generation starts automatically.</p></div></dialog>
+<dialog id="payload-dialog" aria-labelledby="payload-title"><div class="dialog-titlebar"><span>request_inspector.exe</span><button class="close" aria-label="Close">×</button></div><div class="dialog-body"><div class="eyebrow">OUTGOING REQUEST / PREVIEW ONLY</div><h2 id="payload-title">Inspect the actual payload.</h2><p>This is the request body for the provider. It contains no credentials and has not been submitted.</p><pre id="payload"></pre></div></dialog>
+</body>
+</html>

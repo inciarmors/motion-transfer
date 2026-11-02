@@ -1,34 +1,40 @@
 const $ = id => document.getElementById(id);
 let models = [], jobs = [], busy = false, uploadCount = 0, selectedJob = null;
-const statusNames = { submitting: 'INVIO', queued: 'IN CODA', running: 'IN CORSO', completed: 'COMPLETATO', failed: 'ERRORE', cancelled: 'ANNULLATO', submission_unknown: 'DA VERIFICARE' };
+const statusNames = { submitting: 'SUBMITTING', queued: 'QUEUED', running: 'RUNNING', completed: 'COMPLETED', failed: 'FAILED', cancelled: 'CANCELLED', submission_unknown: 'CHECK PROVIDER' };
 const terminal = job => ['completed', 'failed', 'cancelled', 'submission_unknown'].includes(job.status);
 const current = () => models.find(m => m.id === $('model').value);
 function notice(message, error = false) { $('notice').textContent = message; $('notice').className = error ? 'error' : ''; $('notice').hidden = false; }
 async function api(path, options = {}) {
   const response = await fetch(path, options);
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Richiesta non riuscita.');
+  if (!response.ok) throw new Error(data.error || 'Request failed.');
   return data;
 }
 function buttonState() { $('generate').disabled = busy || uploadCount > 0 || !current()?.configured; }
 function configureModel() {
   const m = current(); if (!m) return;
   $('model-note').textContent = m.note;
-  $('connection').textContent = m.configured ? 'COLLEGATO' : 'DA CONFIGURARE';
+  $('connection').textContent = m.configured ? 'CONFIGURED' : 'KEY REQUIRED';
   $('connection').className = m.configured ? 'badge' : 'badge off';
-  $('image-limit').textContent = m.maxImages === 1 ? '1 immagine' : `Fino a ${m.maxImages}`;
+  $('image-limit').textContent = m.maxImages === 1 ? '1 image' : `Up to ${m.maxImages}`;
   $('duration-limit').textContent = `4–${m.maxDuration || 30} s`;
   $('duration').max = m.maxDuration || 30;
   $('duration').required = m.id === 'wan3';
-  $('resolution').replaceChildren(...(m.resolutions.length ? m.resolutions : ['Automatico']).map(r => new Option(r, r)));
+  $('resolution').replaceChildren(...(m.resolutions.length ? m.resolutions : ['Automatic']).map(r => new Option(r, r)));
   if (m.resolutions.includes('720p')) $('resolution').value = '720p';
   $('resolution').disabled = !m.resolutions.length;
   $('prompt').disabled = !m.prompt;
-  $('prompt').placeholder = m.prompt ? 'Descrivi cosa cambiare e cosa mantenere…' : 'Questo modello elabora automaticamente i riferimenti.';
+  $('prompt').placeholder = m.prompt ? 'Describe what to change and what to preserve…' : 'This model processes references automatically.';
   $('recipe-field').hidden = m.id !== 'wan3';
   document.querySelectorAll('.upload').forEach(el => el.classList.toggle('disabled', !m.upload));
-  $('upload-note').textContent = m.upload ? 'Gli upload vengono inviati a fal. MP4 ≤100 MB, immagini ≤10 MB.' : 'Usa URL HTTPS scaricabili dal provider. Le anteprime vengono caricate solo nel tuo browser.';
+  $('upload-note').textContent = m.upload ? 'Uploads are sent to fal. MP4 ≤100 MB; images ≤10 MB.' : 'Use downloadable HTTPS URLs. Previews load in your browser.';
+  updatePromptRequirement();
   buttonState();
+}
+function updatePromptRequirement() {
+  const required = current()?.id === 'wan3' && $('recipe').value === 'raw';
+  $('prompt').required = required;
+  $('prompt-optional').textContent = required ? 'required for baseline' : 'optional';
 }
 function input() {
   const m = current();
@@ -45,7 +51,7 @@ function previewImages() {
   $('references-strip').replaceChildren();
   $('image-urls').value.split('\n').map(s => s.trim()).filter(Boolean).slice(0,30).forEach((url, i) => {
     const safe = publicPreviewUrl(url); if (!safe) return;
-    const img = document.createElement('img'); img.src = safe; img.alt = `Riferimento ${i+1}`; img.referrerPolicy = 'no-referrer'; img.loading = 'lazy'; $('references-strip').append(img);
+    const img = document.createElement('img'); img.src = safe; img.alt = `Reference ${i+1}`; img.referrerPolicy = 'no-referrer'; img.loading = 'lazy'; $('references-strip').append(img);
   });
 }
 function selectJob(job) {
@@ -65,7 +71,7 @@ function renderJobs() {
     const button = document.createElement('button'); button.className = 'job'; button.type = 'button';
     const details = document.createElement('div'), title = document.createElement('div'), meta = document.createElement('div'), status = document.createElement('span');
     title.className = 'job-title'; title.textContent = models.find(m => m.id === job.input.model)?.name || job.input.model;
-    meta.className = 'job-meta'; meta.textContent = `${new Date(job.createdAt).toLocaleString('it-IT')} · ${job.input.resolution || 'Auto'} · ${job.input.recipe || 'raw'}${job.providerId ? ` · ID ${job.providerId}` : ''}`;
+    meta.className = 'job-meta'; meta.textContent = `${new Date(job.createdAt).toLocaleString('en-GB')} · ${job.input.resolution || 'Auto'} · ${job.input.recipe || 'raw'}${job.providerId ? ` · ID ${job.providerId}` : ''}`;
     if (job.error || job.pollError) meta.textContent += ` · ${job.error || job.pollError}`;
     status.className = 'job-status'; status.textContent = statusNames[job.status] || job.status;
     details.append(title,meta); button.append(details,status); button.addEventListener('click',()=>selectJob(job)); $('jobs').append(button);
@@ -77,31 +83,32 @@ function fileDuration(file) {
   return new Promise((resolve,reject) => {
     const v = document.createElement('video'), url = URL.createObjectURL(file);
     const finish = (error) => { clearTimeout(timer); URL.revokeObjectURL(url); v.removeAttribute('src'); error ? reject(error) : resolve(v.duration); };
-    const timer = setTimeout(()=>finish(new Error('Impossibile leggere la durata del video.')),10000);
-    v.onloadedmetadata = () => { const d=v.duration; if (!Number.isFinite(d) || d<4 || d>30) finish(new Error('Usa una clip da 4 a 30 secondi.')); else { clearTimeout(timer); URL.revokeObjectURL(url); resolve(d); } };
-    v.onerror = () => finish(new Error('Formato video non leggibile. Usa MP4.')); v.src=url;
+    const timer = setTimeout(()=>finish(new Error('Could not read the video duration.')),10000);
+    v.onloadedmetadata = () => { const d=v.duration; if (!Number.isFinite(d) || d<4 || d>30) finish(new Error('Use a clip between 4 and 30 seconds.')); else { clearTimeout(timer); URL.revokeObjectURL(url); resolve(d); } };
+    v.onerror = () => finish(new Error('Could not read the video format. Use MP4.')); v.src=url;
   });
 }
 async function uploadFiles(files, isVideo) {
   const m = current();
   if (!files.length || !m.upload) return;
   const previous = $('image-urls').value.split('\n').filter(s=>s.trim());
-  if (!isVideo && previous.length + files.length > m.maxImages) return notice(`Questo motore accetta al massimo ${m.maxImages} riferimenti.`,true);
+  if (!isVideo && previous.length + files.length > m.maxImages) return notice(`This engine accepts up to ${m.maxImages} references.`,true);
   uploadCount++; buttonState();
   try {
     for (const file of files) {
-      if (file.size > (isVideo?100:10)*1024*1024) throw new Error('File troppo grande. Video: 100 MB; immagine: 10 MB.');
+      if (file.size > (isVideo?100:10)*1024*1024) throw new Error('File too large. Video limit: 100 MB; image limit: 10 MB.');
       const duration = isVideo ? await fileDuration(file) : null;
-      notice('Caricamento a fal in corso…');
+      notice('Uploading to fal…');
       const data = await api('/api/uploads',{ method:'POST', headers:{'Content-Type':file.type}, body:file });
       if (isVideo) { $('video-url').value=data.url; $('duration').value=duration.toFixed(2); previewSource(); }
       else { $('image-urls').value = [$('image-urls').value.trim(), data.url].filter(Boolean).join('\n'); previewImages(); }
     }
-    notice('Caricamento completato. Il file è pronto per la generazione.');
+    notice('Upload complete. Your file is ready for generation.');
   } catch(error) { notice(error.message,true); }
   finally { uploadCount--; buttonState(); }
 }
 $('model').addEventListener('change',configureModel);
+$('recipe').addEventListener('change',updatePromptRequirement);
 $('video-url').addEventListener('change',()=>{ $('duration').value=''; previewSource(); });
 $('source-video').addEventListener('loadedmetadata',()=>{ $('source-meta').textContent = `${$('source-video').videoWidth}×${$('source-video').videoHeight} · ${$('source-video').duration.toFixed(1)}s`; if (!selectedJob && Number.isFinite($('source-video').duration)) $('duration').value=$('source-video').duration.toFixed(2); });
 $('image-urls').addEventListener('change',previewImages);
@@ -119,13 +126,13 @@ $('generation-form').addEventListener('submit',async event=>{
   const fingerprint = body;
   let key;
   try { const pending=JSON.parse(sessionStorage.getItem('pending-submission') || 'null'); key=pending?.fingerprint===fingerprint?pending.key:crypto.randomUUID(); sessionStorage.setItem('pending-submission',JSON.stringify({key,fingerprint})); }
-  catch { notice('Le sessioni browser sono disabilitate. Abilitale per evitare invii duplicati.',true); busy=false; buttonState(); return; }
+  catch { notice('Browser session storage is disabled. Enable it to prevent duplicate submissions.',true); busy=false; buttonState(); return; }
   try {
     const job=await api('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':key},body});
     sessionStorage.removeItem('pending-submission'); selectedJob=job.id;
-    notice(job.status==='queued'?'Richiesta accettata. Puoi seguirla nello storico.':job.error || 'Controlla lo stato della richiesta.',job.status!=='queued');
+    notice(job.status==='queued'?'Request accepted. Track its progress in the session log.':job.error || 'Check the request status.',job.status!=='queued');
     await refreshJobs();
-  } catch(error){ notice(`${error.message} Se l’invio è stato interrotto, riprova con gli stessi campi: verrà riutilizzato lo stesso identificatore.`,true); }
+  } catch(error){ notice(`${error.message} If submission was interrupted, retry with the same inputs to reuse the same request identifier.`,true); }
   finally{busy=false;buttonState();}
 });
 async function pollLoop() {
@@ -134,7 +141,7 @@ async function pollLoop() {
       const updated = await api(`/api/jobs/${job.id}`); const index=jobs.findIndex(j=>j.id===updated.id); if(index>=0) jobs[index]=updated;
     }
     if(jobs.some(j=>!terminal(j)) || selectedJob) renderJobs();
-  } catch(error) { notice(`Aggiornamento interrotto: ${error.message} Le richieste non vengono reinviate.`,true); }
+  } catch(error) { notice(`Status update interrupted: ${error.message} Requests will not be resubmitted.`,true); }
   finally { setTimeout(pollLoop,5500); }
 }
 try { models=await api('/api/models'); $('model').replaceChildren(...models.map(m=>new Option(m.name,m.id))); configureModel(); await refreshJobs(); pollLoop(); }
