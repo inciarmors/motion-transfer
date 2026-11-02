@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="it">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Uno studio indipendente per trasferire movimento con le tue API."><title>Motion Transfer — Studio</title><link rel="stylesheet" href="/style.css"><script src="/app.js" type="module"></script></head>
+<body>
+<header><a class="brand" href="/" aria-label="Motion Transfer home"><span class="mark">m<span>↗</span></span><strong>MOTION<span>TRANSFER</span></strong></a><div class="header-right"><span class="local"><i></i> WORKSPACE LOCALE</span><button id="setup-button" class="secondary">Configura API <span>↗</span></button></div></header>
+<main>
+<aside><div class="eyebrow">01 / CREA</div><h1>Stesso movimento.<br><em>Un’altra storia.</em></h1><p class="intro">Il tuo video, i tuoi riferimenti, le tue API.</p>
+<form id="generation-form">
+<label for="model">Motore <span id="connection" class="badge">…</span></label><select id="model" name="model"></select><p id="model-note" class="hint"></p>
+<div class="field-title"><label for="video-url">Video di movimento</label><span id="duration-limit">4–30 s</span></div>
+<div class="url-row"><input id="video-url" type="url" placeholder="https://…/movimento.mp4" required aria-label="URL video di movimento"><label class="upload" title="Carica un video su fal"><span>↑</span><input id="video-file" type="file" accept="video/mp4" aria-label="Carica video su fal"></label></div>
+<div class="field-title"><label for="image-urls">Riferimenti immagine</label><span id="image-limit">1 immagine</span></div>
+<div class="url-row"><textarea id="image-urls" rows="2" placeholder="https://…/personaggio.png&#10;Un URL per riga" required></textarea><label class="upload" title="Carica immagini su fal"><span>↑</span><input id="image-files" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-label="Carica immagini su fal"></label></div>
+<p id="upload-note" class="hint">Gli upload vengono inviati a fal. In alternativa usa URL HTTPS tuoi.</p>
+<div class="two-fields"><div><label for="resolution">Risoluzione</label><select id="resolution"></select></div><div><label for="duration">Durata sorgente <span class="muted">(s)</span></label><input id="duration" type="number" min="4" max="30" step="0.01" placeholder="Es. 8"></div></div>
+<div id="recipe-field" hidden><label for="recipe">Harness sperimentale</label><select id="recipe"><option value="raw">Baseline · solo il mio prompt</option><option value="motion-transfer">Trasferisci movimento</option><option value="character-replace">Sostituisci personaggio</option></select><p class="hint">Template originale e ispezionabile. Non è il prompt recuperato da Genjutsu.</p></div>
+<label for="prompt">Direzione creativa <span class="muted">facoltativa</span></label><textarea id="prompt" rows="3" maxlength="10000" placeholder="Descrivi cosa cambiare e cosa mantenere…"></textarea>
+<button id="preview-button" type="button" class="text-button">Ispeziona la richiesta <span>↗</span></button>
+<div class="submit-area"><p class="billing">Software gratuito. Generare usa il saldo del provider selezionato.</p><button id="generate" class="primary" type="submit">Genera video <span>↗</span></button></div>
+</form></aside>
+<section class="workspace">
+<div class="workspace-heading"><div><div class="eyebrow">02 / ESPLORA</div><h2>Il tuo motion lab</h2></div><span class="edition">OPEN STUDIO / 001</span></div>
+<div id="notice" role="status" aria-live="polite" hidden></div>
+<div class="preview-grid">
+<article class="preview-panel"><div class="panel-top"><span><i class="dot"></i> SORGENTE</span><span id="source-meta">Movimento & camera</span></div><div class="media-stage"><video id="source-video" controls playsinline preload="metadata" hidden></video><div id="source-empty" class="empty-visual"><div class="motion-symbol"><span></span><span></span><span></span></div><h3>Inizia da un movimento</h3><p>Una performance. Una camera.<br>Il punto di partenza della tua nuova scena.</p></div></div></article>
+<article class="preview-panel result-panel"><div class="panel-top"><span><i class="dot green"></i> RISULTATO</span><span id="result-status">In attesa di una storia</span></div><div class="media-stage"><video id="result-video" controls playsinline preload="metadata" hidden></video><div id="result-empty" class="empty-visual"><div class="target-symbol">↗</div><h3>Una nuova interpretazione</h3><p>Scegli i riferimenti e il motore.<br>Il risultato apparirà qui.</p></div></div><a id="result-link" class="result-link" target="_blank" rel="noopener noreferrer" hidden>Apri il video originale ↗</a></article>
+</div>
+<div class="references-strip" id="references-strip" aria-label="Anteprime dei riferimenti"></div>
+<div class="lab-note"><span>↳</span><p><strong>Un esperimento trasparente.</strong> Wan 3.0 è un’ipotesi da confrontare. Genjutsu usa una pipeline server non pubblica: nessuna equivalenza è stata dimostrata.</p><a href="https://github.com/inciarmors/motion-transfer/blob/main/docs/research.md" target="_blank" rel="noopener noreferrer">Leggi l’analisi ↗</a></div>
+<div class="history-heading"><h2>Sessioni <span id="job-count">00</span></h2><button id="refresh" class="text-button">Aggiorna ↻</button></div>
+<div id="jobs" class="jobs"><div class="history-empty"><span>↗</span><div><strong>Il prossimo esperimento è tuo.</strong><p>Le richieste restano nello storico locale, anche dopo un riavvio.</p></div></div></div>
+<footer><span>BRING YOUR OWN API.</span><span>Creato per sperimentare, con controllo.</span></footer>
+</section>
+</main>
+<dialog id="setup-dialog"><button class="close" aria-label="Chiudi">×</button><div class="eyebrow">IL TUO WORKSPACE</div><h2>Collega un motore.</h2><p>Copia <code>.env.example</code> in <code>.env</code>, inserisci le chiavi sul tuo computer e riavvia con <code>npm start</code>.</p><dl><dt>Wan 3.0 diretto</dt><dd><code>DASHSCOPE_API_KEY</code> e <code>ALIBABA_API_BASE</code> del tuo workspace regionale.</dd><dt>Kling / Wan Animate</dt><dd><code>FAL_KEY</code>. Abilita anche gli upload a fal.</dd><dt>Genjutsu ufficiale</dt><dd><code>HF_CREDENTIALS</code> nel formato ID:SECRET. Riferimenti tramite URL HTTPS.</dd><dt>Il tuo servizio</dt><dd><code>CUSTOM_API_URL</code> e, se necessario, <code>CUSTOM_API_KEY</code>.</dd></dl><p class="hint">Le chiavi restano nel server locale. Non inserirle negli URL dei riferimenti. Nessuna generazione di prova viene avviata automaticamente.</p></dialog>
+<dialog id="payload-dialog"><button class="close" aria-label="Chiudi">×</button><div class="eyebrow">RICHIESTA EFFETTIVA</div><h2>Nessuna scatola nera nel client.</h2><p>Questo è il corpo della richiesta al provider. Non include credenziali e non è ancora stato inviato.</p><pre id="payload"></pre></dialog>
+</body></html>
