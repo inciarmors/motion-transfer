@@ -6,6 +6,8 @@ The interface takes its cues from early-2000s desktop utilities: heavy beveled w
 
 **This is not a replica of the Genjutsu model. There is no proof that Genjutsu uses Wan 3.0.** Read the [evidence and limitations](docs/research.md) before interpreting results.
 
+New research: [Genjutsu Light playground analysis](docs/genjutsu-light.md) traces its public schema, exported agent documentation, and browser submission path, and defines follow-up experiments for its 15-second trim and audio behavior.
+
 ## Quick start
 
 Requires Node.js 22.15+ (Node 24 recommended) and npm.

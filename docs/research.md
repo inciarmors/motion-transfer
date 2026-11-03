@@ -2,6 +2,8 @@
 
 Analysis dated November 2, 2026. **We have not established that Genjutsu is Wan 3.0, nor recovered its server-side generation pipeline.** This repository implements an independent laboratory; it does not promise a perfect replica.
 
+November 3 follow-up: [Genjutsu Light playground investigation](genjutsu-light.md). Light documents a 15-second source trim and input-plus-output billing, both compatible with a Wan 3.0-based implementation. Its exported agent prompt contains integration documentation, not a recovered generation prompt. Treat Light and standard Genjutsu as separate experimental targets.
+
 ## Is the harness just a prompt?
 
 A harness can include prompting, model selection, input transformation, temporal segmentation, conditioning, reference management, and postprocessing. Which of these steps Genjutsu performs on its server remains unknown. Treating its HTTP contract as its generation algorithm would lead to a false conclusion.
@@ -36,7 +38,7 @@ Zero-based UTF-8 byte offsets in core: `l$` (builder) 510747; `l0` (serializer) 
 
 [Wan 3.0 on Alibaba](https://help.aliyun.com/en/model-studio/wan3-video-generation-api-reference) accepts reference videos and images with editing instructions. Reference videos total at most 15 seconds; output can reach 30 seconds, with combined input and output constrained to 30 seconds. Instructions can refer to `Video 1` and `Image 1`. Our adapter uses `ratio: adaptive`, `duration: -1`, and disables automatic prompt expansion to make experiments comparable. These settings **were not extracted from Genjutsu**.
 
-The 15/30-second difference weakens the hypothesis of simple, unmodified forwarding to Wan's public API. It does not rule out chunking, different partner APIs, other models, or different commercial limits. It does not establish the underlying architecture.
+For standard Genjutsu, the 15/30-second difference weakens the hypothesis of simple, unmodified forwarding to Wan's public API. Light's separately documented 15-second trim removes this particular mismatch for Light. Neither observation rules out chunking, different partner APIs, other models, or different commercial limits, or establishes the underlying architecture.
 
 ## Separate hypotheses
 
